@@ -1,0 +1,10 @@
+*.tsbuildinfo
+.cache/
+.claude/settings.local.json
+.env
+.env.*
+.eslintcache
+.scratch/
+coverage/
+dist/
+node_modules/

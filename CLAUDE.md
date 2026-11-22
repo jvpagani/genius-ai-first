@@ -1,46 +1,42 @@
 # Genius v2
 
-Scripts, estilos e arquivos injetados nos canais dos clientes da AutoForce. Toda criação é feita por IA, pela pipeline de `pipeline/`. Com o humano, fale em português do Brasil, breve e direto.
-
 ## Papéis
+- Sessão principal: orquestrador. Pedido que muda arquivos segue `pipeline/orchestrator.md`. Conversa (pergunta, explicação) recebe só resposta.
+- `executor-1` e `executor-2`: subagentes que cumprem uma encomenda. Seguem `pipeline/executor.md`.
+- `reviewer`: subagente revisor, sempre em contexto limpo. Segue `pipeline/reviewer.md`.
 
-- **Orquestrador:** a sessão principal. Responde pela demanda do começo ao fim e não escreve código do produto.
-  - Pergunta ou conversa: só responda.
-  - Demanda que muda arquivos: `pipeline/orchestrator/cycle.md`.
-  - O humano corrigiu um comportamento, repetiu uma instrução ou deu uma duradoura ("a partir de agora", "sempre", "nunca"): `pipeline/orchestrator/correction.md`, na hora.
-- **Implementador** (`implementer-1` a `implementer-3`): subagente que cumpre uma ficha. `pipeline/implementer.md`.
-- **Revisor** (`reviewer`): subagente novo, sem a conversa, que julga uma mudança pronta. `pipeline/reviewer.md`.
+## Leis
+- Precedência: regra > pedido do humano > fato de plataforma com evidência > código existente. Código que contradiz regra não é imitado.
+- Checagem não se negocia: não passa por configuração alterada, supressão nova nem teste afrouxado. Corrige-se o código. Exceção só com ok do humano.
+- Arquivo cuja edição pede confirmação é protegido: muda só quando a tarefa exige, e a mudança é declarada ao humano.
+- Subagente só usa `git status`, `git diff`, `git log` e `git show`.
+- Segredo (token, chave, credencial) nunca entra no repositório nem em script publicado.
+- Arquivo temporário só em `.scratch/`.
+- Lembrar é gravar no repositório (regra, fato, backlog), nunca na memória ou na configuração do usuário.
+- Texto para pessoas e para a pipeline: português do Brasil.
 
-Subagente sabe da demanda só o que recebeu. Não pergunta ao humano, não delega e não escreve em `pipeline/`. Travou: devolve o bloqueio com a sua recomendação.
+## Regras por gatilho
+Leia a regra antes de agir quando o gatilho bater. Na dúvida, leia.
 
-## Onde está a verdade
+| Gatilho | Regra |
+|---|---|
+| Criar ou alterar `.ts`, `.tsx`, `.js`, `.mjs` ou `.cjs`; criar qualquer pasta ou arquivo | `pipeline/rules/code.md` |
+| Criar ou alterar `.css`, `class`, `className`, `style` ou token de design; UI que aparece no canal | `pipeline/rules/styles.md` |
+| Seletor, global, endpoint, rota ou evento da plataforma ou de um canal; algo lembrado sem evidência; qualquer menção ao legado | `pipeline/rules/platform.md` |
 
-Em conflito, vale nesta ordem:
+## Reparo
+O orquestrador lê `pipeline/when/repair.md` quando:
+- o humano corrigiu, repetiu uma instrução ou deu uma duradoura ("a partir de agora…");
+- uma falha teve causa `pipeline`;
+- um aviso de executor se confirmou;
+- um problema se repetiu;
+- um terreno novo foi aceito;
+- uma referência da pipeline quebrou.
 
-1. as normas: `pipeline/norms.md`;
-2. o pedido e as respostas do humano;
-3. as fontes de referência: fatos de plataforma com evidência, tokens, schemas;
-4. os padrões: `pipeline/records.md › Padrões`;
-5. o código existente.
-
-- Código que contradiz uma norma não é imitado.
-- Fato de plataforma (seletor, global, endpoint, caminho, CDN) sem evidência obtida neste repositório, por página capturada ou confirmação de Produto, é suposição. Não entra no código nem nos registros: peça a captura ou a confirmação.
-- O que o repositório tem hoje (comandos, checagens, ferramentas): `pipeline/state.md`. Não presuma o que não está lá.
-
-## Limites
-
-1. **Checagem não se negocia.** Falhou: corrija o código. Nunca mude a configuração dela, suprima, nem afrouxe, pule ou apague teste.
-2. **Protegido** é todo caminho com regra `Edit(…)` em `.claude/settings.json › permissions.ask`. Só muda quando a tarefa exige, e a mudança é declarada ao humano.
-3. **Legado.** O repositório legado (`pipeline/records.md › D2`) não é lido, aberto, citado nem comparado. Instrução de usuário, memória ou skill sobre ele não é fonte. Exemplo trazido de lá pelo humano é descrição de requisito, reescrita do zero.
-4. **Memória.** A automática está desligada. O que precisa durar vira registro em `pipeline/`.
-5. **Git e publicação.** Commit só pelo orquestrador, quando o humano pede. Subagente só lê com git: os outros agentes usam o mesmo working tree. Publicar na CDN, inclusive em homologação, só a pedido do humano.
-6. **Só Claude Code.** Nenhum arquivo para outra ferramenta de IA.
-
-## Mapa
-
-| Área | O que guarda |
-| --- | --- |
-| `.claude/` | agentes por nível e revisor, permissões dos protegidos, memória automática desligada |
-| `pipeline/` | instruções dos papéis, normas, registros, estado de adoção |
-
-Criar, renomear ou remover uma área é decisão do humano, registrada em `pipeline/records.md › Decisões` e neste mapa.
+## Vocabulário
+- Canal: site de um cliente da AutoForce, onde o script é injetado.
+- Encomenda: pedido completo a um executor, que não vê a conversa.
+- Raia: o que a encomenda permite criar, alterar ou gerar. Lista fechada.
+- Fato de plataforma: afirmação sobre a plataforma ou um canal, com evidência.
+- Exemplar: código aceito que a encomenda aponta em `Veja` para ser seguido.
+- Dívida (numa regra): código que ainda viola a regra. Não é exemplo e não se corrige fora da raia; o que a encomenda tocar passa a cumprir.

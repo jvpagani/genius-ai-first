@@ -2,35 +2,23 @@
   "autoMemoryEnabled": false,
   "permissions": {
     "ask": [
-      "Bash(git add *)",
       "Bash(git checkout *)",
       "Bash(git clean *)",
       "Bash(git commit *)",
-      "Bash(git merge *)",
-      "Bash(git mv *)",
       "Bash(git push *)",
-      "Bash(git rebase *)",
       "Bash(git reset *)",
       "Bash(git restore *)",
-      "Bash(git rm *)",
       "Bash(git stash *)",
-      "Bash(git switch *)",
       "Edit(/.claude/**)",
+      "Edit(/.gitattributes)",
       "Edit(/CLAUDE.md)",
-      "Edit(/pipeline/**)",
-      "PowerShell(git add *)",
       "PowerShell(git checkout *)",
       "PowerShell(git clean *)",
       "PowerShell(git commit *)",
-      "PowerShell(git merge *)",
-      "PowerShell(git mv *)",
       "PowerShell(git push *)",
-      "PowerShell(git rebase *)",
       "PowerShell(git reset *)",
       "PowerShell(git restore *)",
-      "PowerShell(git rm *)",
-      "PowerShell(git stash *)",
-      "PowerShell(git switch *)"
+      "PowerShell(git stash *)"
     ]
   }
 }
